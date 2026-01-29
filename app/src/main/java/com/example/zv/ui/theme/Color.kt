@@ -2,6 +2,10 @@ package com.example.zv.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val BluePrimary = Color(0xFF2196F3)
+val BlueSecondary = Color(0xFF03A9F4)
+val BlueTertiary = Color(0xFF00BCD4)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

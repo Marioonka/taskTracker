@@ -12,8 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 @Composable
 fun HomeScreen(
     user: FirebaseUser?,
-    onScannerClick: () -> Unit,
-    onHistoryClick: () -> Unit,
+    onTaskListClick: () -> Unit,
     onDeviceInfoClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onSignOut: () -> Unit
@@ -25,85 +24,48 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Антивирус",
+            text = "TaskFlow",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             modifier = Modifier.padding(bottom = 32.dp)
         )
         
         if (user != null) {
-            if (user.isAnonymous) {
-                Text(
-                    text = "Вы вошли как гость",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-            } else {
-                Text(
-                    text = "Добро пожаловать!",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = user.email ?: "",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-            }
+            Text(
+                text = if (user.isAnonymous) "Вы зашли как гость" else "Привет, ${user.email}",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
         }
         
         Button(
-            onClick = onScannerClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(bottom = 16.dp)
+            onClick = onTaskListClick,
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 16.dp)
         ) {
-            Text("Сканер вирусов")
-        }
-        
-        Button(
-            onClick = onHistoryClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(bottom = 16.dp),
-            enabled = user?.isAnonymous != true
-        ) {
-            Text("История угроз")
+            Text("Мои задачи")
         }
         
         OutlinedButton(
             onClick = onDeviceInfoClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 16.dp)
         ) {
-            Text("Информация об устройстве")
+            Text("О приложении")
         }
         
         OutlinedButton(
             onClick = onSettingsClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(bottom = 16.dp)
+            modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 16.dp)
         ) {
-            Text("Настройки")
+            Text("Настройки профиля")
         }
         
         Spacer(modifier = Modifier.weight(1f))
         
         OutlinedButton(
             onClick = onSignOut,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
+            modifier = Modifier.fillMaxWidth().height(56.dp)
         ) {
             Text("Выйти")
         }
     }
 }
-

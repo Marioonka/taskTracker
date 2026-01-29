@@ -5,7 +5,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import com.example.zv.navigation.Screen
 
@@ -16,10 +15,10 @@ fun BottomNavigationBar(
     isGuest: Boolean
 ) {
     val items = listOf(
-        BottomNavItem(Screen.Scanner.route, "Сканер", Icons.Default.Search),
-        BottomNavItem(Screen.ThreatHistory.route, "История", Icons.Default.List),
-        BottomNavItem(Screen.DeviceInfo.route, "Устройство", Icons.Default.Phone),
-        BottomNavItem(Screen.Settings.route, "Настройки", Icons.Default.Settings)
+        BottomNavItem(Screen.Home.route, "Главная", Icons.Default.Home),
+        BottomNavItem(Screen.TaskList.route, "Задачи", Icons.Default.List),
+        BottomNavItem(Screen.DeviceInfo.route, "Инфо", Icons.Default.Info),
+        BottomNavItem(Screen.Settings.route, "Профиль", Icons.Default.Person)
     )
     
     NavigationBar(
@@ -39,10 +38,6 @@ fun BottomNavigationBar(
                 label = { Text(item.label) },
                 selected = isSelected,
                 onClick = {
-                    if (item.route == Screen.ThreatHistory.route && isGuest) {
-                        // Не навигируем, если гость
-                        return@NavigationBarItem
-                    }
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
@@ -50,8 +45,7 @@ fun BottomNavigationBar(
                         launchSingleTop = true
                         restoreState = true
                     }
-                },
-                enabled = !(item.route == Screen.ThreatHistory.route && isGuest)
+                }
             )
         }
     }
@@ -62,4 +56,3 @@ data class BottomNavItem(
     val label: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
-

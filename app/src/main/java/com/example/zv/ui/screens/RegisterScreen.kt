@@ -28,9 +28,14 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Регистрация",
+            text = "TaskFlow",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Регистрация",
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 48.dp)
         )
         

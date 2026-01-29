@@ -15,23 +15,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.zv.auth.AppUser
 import com.example.zv.auth.AuthState
 import com.example.zv.auth.AuthViewModel
 import com.example.zv.ui.components.BottomNavigationBar
-import com.example.zv.ui.screens.DeviceInfoScreen
-import com.example.zv.ui.screens.LoginScreen
-import com.example.zv.ui.screens.RegisterScreen
-import com.example.zv.ui.screens.ScannerScreen
-import com.example.zv.ui.screens.SettingsScreen
-import com.example.zv.ui.screens.ThreatHistoryScreen
+import com.example.zv.ui.screens.*
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Register : Screen("register")
     object Home : Screen("home")
-    object Scanner : Screen("scanner")
-    object ThreatHistory : Screen("threat_history")
+    object TaskList : Screen("task_list")
     object DeviceInfo : Screen("device_info")
     object Settings : Screen("settings")
 }
@@ -51,12 +44,11 @@ fun NavGraph(
                        currentRoute != Screen.Register.route &&
                        authState is AuthState.Authenticated
     
-    // Навигация на Scanner при успешной аутентификации
     LaunchedEffect(authState) {
         if (authState is AuthState.Authenticated) {
             val currentRoute = navController.currentDestination?.route
             if (currentRoute == Screen.Login.route || currentRoute == Screen.Register.route) {
-                navController.navigate(Screen.Scanner.route) {
+                navController.navigate(Screen.Home.route) {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }
             }
@@ -79,81 +71,72 @@ fun NavGraph(
             startDestination = Screen.Login.route,
             modifier = androidx.compose.ui.Modifier.padding(paddingValues)
         ) {
-        composable(Screen.Login.route) {
-            var errorMessage by remember { mutableStateOf<String?>(null) }
+            composable(Screen.Login.route) {
+                var errorMessage by remember { mutableStateOf<String?>(null) }
+                LoginScreen(
+                    onLoginClick = { email, password ->
+                        errorMessage = null
+                        authViewModel.signIn(email, password) { error -> errorMessage = error }
+                    },
+                    onRegisterClick = { navController.navigate(Screen.Register.route) },
+                    onGuestClick = {
+                        errorMessage = null
+                        authViewModel.signInAsGuest { error -> errorMessage = error }
+                    },
+                    isLoading = authState is AuthState.Loading,
+                    errorMessage = errorMessage
+                )
+            }
             
-            LoginScreen(
-                onLoginClick = { email, password ->
-                    errorMessage = null
-                    authViewModel.signIn(email, password) { error ->
-                        errorMessage = error
-                    }
-                },
-                onRegisterClick = {
-                    navController.navigate(Screen.Register.route)
-                },
-                onGuestClick = {
-                    errorMessage = null
-                    authViewModel.signInAsGuest { error ->
-                        errorMessage = error
-                    }
-                },
-                isLoading = authState is AuthState.Loading,
-                errorMessage = errorMessage
-            )
-        }
-        
-        composable(Screen.Register.route) {
-            var errorMessage by remember { mutableStateOf<String?>(null) }
+            composable(Screen.Register.route) {
+                var errorMessage by remember { mutableStateOf<String?>(null) }
+                RegisterScreen(
+                    onRegisterClick = { email, password ->
+                        errorMessage = null
+                        authViewModel.signUp(email, password) { error -> errorMessage = error }
+                    },
+                    onBackClick = { navController.popBackStack() },
+                    isLoading = authState is AuthState.Loading,
+                    errorMessage = errorMessage
+                )
+            }
             
-            RegisterScreen(
-                onRegisterClick = { email, password ->
-                    errorMessage = null
-                    authViewModel.signUp(email, password) { error ->
-                        errorMessage = error
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    user = currentUser,
+                    onTaskListClick = { navController.navigate(Screen.TaskList.route) },
+                    onDeviceInfoClick = { navController.navigate(Screen.DeviceInfo.route) },
+                    onSettingsClick = { navController.navigate(Screen.Settings.route) },
+                    onSignOut = {
+                        authViewModel.signOut()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
                     }
-                },
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                isLoading = authState is AuthState.Loading,
-                errorMessage = errorMessage
-            )
-        }
-        
-        composable(Screen.Scanner.route) {
-            ScannerScreen()
-        }
-        
-        composable(Screen.ThreatHistory.route) {
-            val context = LocalContext.current
+                )
+            }
             
-            ThreatHistoryScreen(
-                user = currentUser,
-                appUser = appUser,
-                context = context,
-                onBack = {}
-            )
+            composable(Screen.TaskList.route) {
+                TaskListScreen()
+            }
+            
+            composable(Screen.DeviceInfo.route) {
+                DeviceInfoScreen()
+            }
+            
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    user = currentUser,
+                    appUser = appUser,
+                    onSignOut = {
+                        authViewModel.signOut()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    },
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
-        
-        composable(Screen.DeviceInfo.route) {
-            DeviceInfoScreen()
-        }
-        
-        composable(Screen.Settings.route) {
-            SettingsScreen(
-                user = currentUser,
-                appUser = appUser,
-                onSignOut = {
-                    authViewModel.signOut()
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                },
-                onBack = {}
-            )
-        }
-    }
     }
 }
-

@@ -12,14 +12,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.zv.auth.AuthViewModel
 import com.example.zv.navigation.NavGraph
-import com.example.zv.ui.theme.ZvTheme
+import com.example.zv.ui.theme.TaskFlowTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ZvTheme {
+            TaskFlowTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

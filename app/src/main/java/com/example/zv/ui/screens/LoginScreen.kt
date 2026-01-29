@@ -28,7 +28,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Антивирус",
+            text = "TaskFlow",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp,
             modifier = Modifier.padding(bottom = 48.dp)
